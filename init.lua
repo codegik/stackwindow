@@ -47,8 +47,6 @@ end)
 
 
 hs.spaces.watcher.new(function(s)
-	print("changed to space " .. hs.spaces.focusedSpace())
-	print("visible windows " .. #hs.window.visibleWindows())
 	createStack(hs.spaces.focusedSpace())
 end):start()
 
