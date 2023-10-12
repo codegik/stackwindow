@@ -5,7 +5,14 @@ function iconFromAppName(app)
 	return hs.image.imageFromAppBundle(appBundle)
 end
 
-function recreateStackWindow(space)
+function isWindowInScreen(screen, window)
+	local margin = 5
+	local R1 = screen:frame()
+	local R2 = window:frame()
+	return (R2.x + R2.w) <= (R1.x + R1.w) and R2.x >= R1.x and R2.y >= R1.y and (R2.y + R2.h) <= (R1.y + R1.h + margin)
+end
+
+function recreateStackWindow()
 	print("cleanning stacked windows")
 	for i, c in pairs(stackedWindows) do
 		hs.inspect(c)
@@ -14,27 +21,35 @@ function recreateStackWindow(space)
 
 	stackedWindows = {}
 
-	local size = #hs.window.visibleWindows()
+	local visibleWindows = hs.window.visibleWindows()
+	local size = #visibleWindows
 	local startAt = 300
 
-	if size > 1 then
-		for i, window in pairs(hs.window.visibleWindows()) do
-			print("adding: window = " .. window:title() .. ", id = " .. window:id())
-			local canvas = hs.canvas.new({ x = 0, y = startAt + 40 * i, h = 50, w = 50 })
-			canvas
-				:insertElement({
-					type = "image",
-					image = iconFromAppName(window:application():title()),
-					frame = { x = 0, y = 10, h = 30, w = 30 },
-					imageAlpha = 0.5,
-					fillColor = { red = 1.0 },
-				})
-				:show()
-			if window:id() == hs.window.focusedWindow():id() then
-				print("hightlighing: window = " .. window:title() .. ", id = " .. window:id())
-				canvas[1].imageAlpha = 1
+	for i, screen in pairs(hs.screen.allScreens()) do
+		if size > 1 then
+			for j, window in pairs(visibleWindows) do
+				if isWindowInScreen(screen, window) then
+					print(
+						"adding: window = "
+							.. window:title()
+							.. ", app = "
+							.. window:application():name()
+							.. " to screen "
+							.. screen:name()
+					)
+					local canvas = hs.canvas.new({ x = screen:frame().x, y = startAt + 40 * j, h = 50, w = 50 })
+					canvas
+						:insertElement({
+							type = "image",
+							image = iconFromAppName(window:application():title()),
+							frame = { x = 0, y = 0, h = 30, w = 30 },
+							imageAlpha = 1,
+							fillColor = { red = 1.0 },
+						})
+						:show()
+					table.insert(stackedWindows, canvas)
+				end
 			end
-			table.insert(stackedWindows, canvas)
 		end
 	end
 end
