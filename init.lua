@@ -13,7 +13,7 @@ function isWindowInScreen(screen, window)
 end
 
 function recreateStackWindow()
-	print("cleanning stacked windows")
+	print("cleaning stacked windows")
 	for i, c in pairs(stackedWindows) do
 		hs.inspect(c)
 		c:delete()
@@ -37,15 +37,26 @@ function recreateStackWindow()
 							.. " to screen "
 							.. screen:name()
 					)
-					local canvas = hs.canvas.new({ x = screen:frame().x, y = startAt + 40 * j, h = 50, w = 50 })
+					local canvas = hs.canvas.new({ x = screen:frame().x - 3, y = startAt + 30 * j, h = 50, w = 50 })
+
+					canvas
+						:insertElement({
+							type = "rectangle",
+							action = "fill",
+							fillColor = { green = 1 },
+							frame = { x = 0, y = 0, h = 25, w = 25 },
+							roundedRectRadii = { xRadius = 5, yRadius = 5 },
+							withShadow = true,
+							shadow = { blurRadius = 5.0, color = { alpha = 1/3 }, offset = { h = -5.0, w = 5.0 } }
+						}, 1)
 					canvas
 						:insertElement({
 							type = "image",
 							image = iconFromAppName(window:application():title()),
-							frame = { x = 0, y = 0, h = 30, w = 30 },
+							frame = { x = 0, y = 0, h = 25, w = 25 },
 							imageAlpha = 1,
 							fillColor = { red = 1.0 },
-						})
+						}, 2)
 						:show()
 					table.insert(stackedWindows, canvas)
 				end
