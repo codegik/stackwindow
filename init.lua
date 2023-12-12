@@ -22,11 +22,11 @@ function recreateStackWindow()
 	stackedWindows = {}
 
 	local visibleWindows = hs.window.visibleWindows()
-	local size = #visibleWindows
+	local windowCount = #visibleWindows
 	local startAt = 300
 
 	for i, screen in pairs(hs.screen.allScreens()) do
-		if size > 1 then
+		if windowCount > 1 then
 			for j, window in pairs(visibleWindows) do
 				if isWindowInScreen(screen, window) then
 					print(
@@ -39,16 +39,15 @@ function recreateStackWindow()
 					)
 					local canvas = hs.canvas.new({ x = screen:frame().x - 3, y = startAt + 30 * j, h = 50, w = 50 })
 
-					canvas
-						:insertElement({
-							type = "rectangle",
-							action = "fill",
-							fillColor = { green = 1 },
-							frame = { x = 0, y = 0, h = 25, w = 25 },
-							roundedRectRadii = { xRadius = 5, yRadius = 5 },
-							withShadow = true,
-							shadow = { blurRadius = 5.0, color = { alpha = 1/3 }, offset = { h = -5.0, w = 5.0 } }
-						}, 1)
+					canvas:insertElement({
+						type = "rectangle",
+						action = "fill",
+						fillColor = { green = 1 },
+						frame = { x = 0, y = 0, h = 25, w = 25 },
+						roundedRectRadii = { xRadius = 5, yRadius = 5 },
+						withShadow = true,
+						shadow = { blurRadius = 5.0, color = { alpha = 1 / 3 }, offset = { h = -5.0, w = 5.0 } },
+					}, 1)
 					canvas
 						:insertElement({
 							type = "image",
